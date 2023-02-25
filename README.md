@@ -334,7 +334,7 @@ sample test to see custom message changes for authentication as sample (serializ
 
 
 # Template Test
-for testing the multi language inside the template i have provided you a sample for a simple header. as you see i am listing all the available languages in the nave bar plus adding the tags it needs to fetch these languages.
+for testing the multi language inside the template i have provided you a sample for a simple header. as you see i am listing all the available languages in the nav bar plus adding the tags it needs to fetch these languages.
 
 ```html
 {% load i18n %}
@@ -366,7 +366,7 @@ now you can see the list of languages based on what you have created, also if yo
 
 notice the url is changing accordingly too.
 
-**Note:** you can do this also in the view too.
+**Note:** you can do this also in the view.
 
 
 # License
