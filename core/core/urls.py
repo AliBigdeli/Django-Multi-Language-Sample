@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.conf import settings
@@ -41,6 +42,10 @@ urlpatterns = [
     path("", include("website.urls")),
 ]
 
+urlpatterns += i18n_patterns(
+    path("", include("website.urls")),
+)
+
 if settings.COMINGSOON:
     urlpatterns.insert(
         0, re_path(r"^", TemplateView.as_view(template_name="comingsoon.html"))
@@ -51,7 +56,7 @@ if settings.DEBUG:
                           document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL,
                           document_root=settings.MEDIA_ROOT)
-    
+
 
 if settings.SHOW_DEBUGGER_TOOLBAR:
     urlpatterns += [path('__debug__/', include('debug_toolbar.urls')),

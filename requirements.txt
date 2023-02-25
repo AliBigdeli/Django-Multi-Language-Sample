@@ -28,3 +28,4 @@ Faker
 # database client
 psycopg2-binary
 
+

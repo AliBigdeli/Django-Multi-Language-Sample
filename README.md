@@ -20,7 +20,11 @@
   - [Build everything](#build-everything)
   - [Note](#note)
   - [Check it out in a browser](#check-it-out-in-a-browser)
-- [Model schema](#model-schema)
+- [Internationalization vs Localization](#internationalization-vs-localization)
+- [Setup](#setup)
+- [Define what needs translation](#define-what-needs-translation)
+- [API Test](#api-test)
+- [creating the locale](#creating-the-locale)
 - [License](#license)
 - [Bugs](#bugs)
 
@@ -84,7 +88,95 @@ something on your machine is already running on port 8000. then you have to chan
 Visit <http://localhost:8000> in your favorite browser.
 
 
-# Model schema
+# Internationalization vs Localization
+Internationalization and localization represent two sides to the same coin. Together, they allow you to deliver your web application's content to different locales.
+
+- **Internationalization**, represented by i18n (18 is the number of letters between i and n), is the processing of developing your application so that it can be used by different locales. This process is generally handled by developers.
+- **Localization**, represented by l10n (10 is the number of letters between l and n), on the other hand, is the process of translating your application to a particular language and locale. This is generally handled by translators.
+
+**Note:** For more, review Localization vs. Internationalization from W3C.
+
+# Setup
+in order to have multi lang support in your project, you need to first have the gettext module installed on the running os. as we are using docker as our environment and specially python image we have integrated installation in dockerfile by default:
+
+```dockerfile 
+# adding gettext package
+RUN apt-get update
+RUN apt-get install gettext -y
+RUN apt-get clean
+RUN rm -rf /var/lib/apt/lists/*
+```
+
+other than that there is no need to install anything else except adding some settings to the project. first of all you need to add the locale to the middleware and after that define the list of languages that you need in your project, and finally set the directory for managing locales.
+
+```python
+# adding additional languages support
+from django.utils.translation import gettext_lazy as _
+LANGUAGES = (
+    ('en', _('English')),
+    ('fa', _('Farsi')),
+)
+LOCALE_PATHS = [
+    BASE_DIR / 'locale/',
+]
+MIDDLEWARE += [
+    "django.middleware.locale.LocaleMiddleware",
+]
+```
+**Note:** you might be using something else, so my case are the ones i use for this sample app.
+
+# Define what needs translation
+where ever in you project that you need translation for incoming messages you can simple set it by putting the text inside the gettext function which mostly import it like this:
+```python
+from django.utils.translation import gettext_lazy as _
+```
+and this is one sample of using it inside your code:
+```python
+from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+from ..models import Author
+from django.utils.translation import gettext_lazy as _
+
+class AuthorSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model= Author
+        fields = ['first_name','last_name']
+        
+        
+    def validate(self, attrs):
+        if attrs.get("first_name").isdigit():
+            raise serializers.ValidationError({"detail":_("first_name cannot have numbers in it")})
+        return super().validate(attrs)
+```
+that as you can see the message 'first_name cannot have numbers in it' will set as a text that can have translation.
+**Note:** you can do this almost everywhere that you need.
+
+
+# API Test
+in order to test the usage in api you have to set a specific header for any language that you define to get the results. for example for **fa** you need to add the following header to your request.
+```
+Accept-Language : fa
+```
+you can do this inside postman or use a mod header extension.
+
+
+
+
+# creating the locale
+python manage.py makemessages --ignore="static" --ignore=".env" --all
+python manage.py makemessages --ignore="static" --ignore=".env" -l fa
+python manage.py compilemessages --ignore=env -l fa
+
+
+
+
+
+
+
+
+
+
 
 
 # License

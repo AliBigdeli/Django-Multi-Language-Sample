@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block extra_css %}
+{% load i18n %}
+
 <style>
     .logo {
         -webkit-filter: grayscale(100%);
@@ -10,6 +12,16 @@
 {% endblock %}
 
 {% block content %}
+<div class="container px-4 py-5" id="form">
+    <h2 class="pb-2 border-bottom">MultiLang Test</h2>
+
+    <div class="row featurette py-5">
+
+        <p>{% trans  "Welcome to my site"  %} ALI </p> 
+    </div>
+</div>
+
+
 <div class="container px-4 py-5" id="Author">
     <h2 class="pb-2 border-bottom">Author</h2>
     <div class="row featurette py-5">

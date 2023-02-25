@@ -11,9 +11,11 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 
+from django.contrib.messages import constants as messages
+from django.utils.translation import gettext_lazy as _
 from datetime import timedelta
 from pathlib import Path
-from django.contrib.messages import constants as messages
+
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,7 +29,8 @@ SECRET_KEY = config("SECRET_KEY", default="test")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", cast=bool, default=True)
-SHOW_DEBUGGER_TOOLBAR = config("SHOW_DEBUGGER_TOOLBAR", cast=bool, default=False)
+SHOW_DEBUGGER_TOOLBAR = config(
+    "SHOW_DEBUGGER_TOOLBAR", cast=bool, default=False)
 
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
@@ -58,20 +61,19 @@ INSTALLED_APPS = [
 ]
 
 
-
 SITE_ID = config("SITE_ID", cast=int, default=1)
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
 
 
 ROOT_URLCONF = "core.urls"
@@ -133,8 +135,6 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
-
 TIME_ZONE = config("TIME_ZONE", default="UTC")
 
 USE_I18N = True
@@ -164,18 +164,8 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# messages configuration for notification handeling in pages
-MESSAGE_TAGS = {
-    messages.DEBUG: "info",
-    messages.INFO: "info",
-    messages.SUCCESS: "success",
-    messages.WARNING: "warning",
-    messages.ERROR: "danger",
-}
-
-
 # Email Configurations for production and development
-if DEBUG:    
+if DEBUG:
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
     EMAIL_USE_TLS = False
     EMAIL_HOST = "smtp4dev"
@@ -269,5 +259,32 @@ if SHOW_DEBUGGER_TOOLBAR:
     ]
     import socket  # only if you haven't already imported this
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
-    INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
-    
+    INTERNAL_IPS = [
+        ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
+
+# adding additional languages support
+from django.utils.translation import gettext_lazy as _
+
+LANGUAGE_CODE = "en"
+
+LANGUAGES = (
+    ('en', _('English')),
+    ('fa', _('Farsi')),
+)
+LOCALE_PATHS = [
+    BASE_DIR / 'locale/',
+]
+# MIDDLEWARE += [
+#     "django.middleware.locale.LocaleMiddleware",
+# ]
+
+
+# messages configuration for notification handeling in pages
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.DEBUG: "info",
+    messages.INFO: "info",
+    messages.SUCCESS: "success",
+    messages.WARNING: "warning",
+    messages.ERROR: "danger",
+}
