@@ -1,7 +1,7 @@
 <div align="center">
-<img loading="lazy" style="width:700px" src="./docs/banner.jpg">
-<h1 align="center">Django Multi-Language API Sample</h1>
-<h3 align="center">Sample Project to show you how to implement multi language api in django</h3>
+<img loading="lazy" style="width:700px" src="./docs/banner.png">
+<h1 align="center">Django Multi-Language Sample</h1>
+<h3 align="center">Sample Project to show you how to implement multi language in django</h3>
 </div>
 <p align="center">
 <a href="https://www.python.org" target="_blank"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" alt="python" width="40" height="40"/> </a>
@@ -23,13 +23,14 @@
 - [Internationalization vs Localization](#internationalization-vs-localization)
 - [Setup](#setup)
 - [Define what needs translation](#define-what-needs-translation)
+- [Creating the locale](#creating-the-locale)
 - [API Test](#api-test)
-- [creating the locale](#creating-the-locale)
+- [Template Test](#template-test)
 - [License](#license)
 - [Bugs](#bugs)
 
 # Goal
-This project main goal is to provide a sample to show you how to implement multi language django api.
+This project main goal is to provide a sample to show you how to implement multi language django.
 
 # Development usage
 You'll need to have [Docker installed](https://docs.docker.com/get-docker/).
@@ -46,7 +47,7 @@ these commands for PowerShell if you want.
 ## Clone the repo
 Clone this repo anywhere you want and move into the directory:
 ```bash
-git clone https://github.com/AliBigdeli/Django-MultiLanguage-API-Sample.git
+git clone https://github.com/AliBigdeli/Django-MultiLanguage-Sample.git
 ```
 
 ## Enviroment Varibales
@@ -153,6 +154,86 @@ that as you can see the message 'first_name cannot have numbers in it' will set 
 **Note:** you can do this almost everywhere that you need.
 
 
+# Creating the locale
+after setting up and making your texts ready you need to create the messages you need for your language.
+so first of all use the command bellow to create the file for ```fa``` language.
+```shell
+python manage.py makemessages --ignore="static" --ignore=".env" -l fa 
+```
+you can use the following command to create it for all of the languages in the list but before that you have to create a folder dedicated to each language in locale directory.
+second use the 
+```shell
+python manage.py makemessages --ignore="static" --ignore=".env" --all
+```
+
+now head to the file you created and open it, you have to see something like this:
+
+```python
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-02-25 12:14+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: core/settings.py:271
+msgid "English"
+msgstr ""
+
+#: core/settings.py:272
+msgid "Farsi"
+msgstr ""
+
+#: templates/website/index.html:20
+msgid "Welcome to my Website"
+msgstr ""
+
+#: website/api/serializers.py:15
+msgid "first_name cannot have numbers in it"
+msgstr ""
+
+```
+as you see there are two keys:
+- msgid: the message you wanted it to be changed
+- msgstr: the definition of the message 
+
+now go ahead and put the meanings like what i had:
+
+```python
+#: core/settings.py:271
+msgid "English"
+msgstr "انکلیسی"
+
+#: core/settings.py:272
+msgid "Farsi"
+msgstr "فارسی"
+
+#: templates/website/index.html:20
+msgid "Welcome to my Website"
+msgstr "به وبسایت من خوش آمدید"
+
+#: website/api/serializers.py:15
+msgid "first_name cannot have numbers in it"
+msgstr "نام نمی تواند حاوی عدد باشد"
+
+```
+
+
+python manage.py compilemessages --ignore=env -l fa
+
 # API Test
 in order to test the usage in api you have to set a specific header for any language that you define to get the results. for example for **fa** you need to add the following header to your request.
 ```
@@ -160,23 +241,50 @@ Accept-Language : fa
 ```
 you can do this inside postman or use a mod header extension.
 
+sample test to see general changes of messages for authentication as sample:
+
+<div align="center"><img loading="lazy" style="width:700px" src="./docs/multi-lang-api-globally.gif"></div>
+
+sample test to see custom message changes for authentication as sample (serializer):
+
+<div align="center"><img loading="lazy" style="width:700px" src="./docs/multi-lang-api-serializer.gif"></div>
 
 
 
-# creating the locale
-python manage.py makemessages --ignore="static" --ignore=".env" --all
-python manage.py makemessages --ignore="static" --ignore=".env" -l fa
-python manage.py compilemessages --ignore=env -l fa
+# Template Test
+for testing the multi language inside the template i have provided you a sample for a simple header. as you see i am listing all the available languages in the nave bar plus adding the tags it needs to fetch these languages.
 
+```html
+{% load i18n %}
 
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button"
+        data-bs-toggle="dropdown" aria-expanded="false">
+        Language
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+        {% get_current_language as LANGUAGE_CODE %}
+        {% get_available_languages as LANGUAGES %}
+        {% get_language_info_list for LANGUAGES as languages %}
 
+        {% for lang in languages %}
+        <li>
+            <a class="dropdown-item" href="/{{ lang.code }}/">
+                {{ lang.name_local }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</li>
 
+```
+now you can see the list of languages based on what you have created, also if you select each language the text will change accordingly
 
+<div align="center"><img loading="lazy" style="width:700px" src="./docs/multi-lang-template-demo.gif"></div>
 
+notice the url is changing accordingly too.
 
-
-
-
+**Note:** you can do this also in the view too.
 
 
 # License

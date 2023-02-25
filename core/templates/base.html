@@ -1,5 +1,5 @@
 {% load static %}
-
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -32,6 +32,25 @@
                     <li><a href="#gallery" class="nav-link px-2 text-white ">Gallery</a></li>
                     <li><a href="#Author" class="nav-link px-2 text-white">Author</a></li>
                     <li><a href="#Contact" class="nav-link px-2 text-white">Contact</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Language
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            {% get_current_language as LANGUAGE_CODE %}
+                            {% get_available_languages as LANGUAGES %}
+                            {% get_language_info_list for LANGUAGES as languages %}
+
+                            {% for lang in languages %}
+                            <li>
+                                <a class="dropdown-item" href="/{{ lang.code }}/">
+                                    {{ lang.name_local }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
                 </ul>
 
 
