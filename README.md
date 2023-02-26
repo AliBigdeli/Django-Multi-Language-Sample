@@ -16,7 +16,7 @@
 - [Goal](#goal)
 - [Development usage](#development-usage)
   - [Clone the repo](#clone-the-repo)
-  - [Enviroment Varibales](#enviroment-varibales)
+  - [Enviroment Variables](#enviroment-variables)
   - [Build everything](#build-everything)
   - [Note](#note)
   - [Check it out in a browser](#check-it-out-in-a-browser)
@@ -50,7 +50,7 @@ Clone this repo anywhere you want and move into the directory:
 git clone https://github.com/AliBigdeli/Django-Multi-Language-Sample.git
 ```
 
-## Enviroment Varibales
+## Enviroment Variables
 enviroment varibales are included in docker-compose.yml file for debugging mode and you are free to change commands inside:
 
 ```yaml
